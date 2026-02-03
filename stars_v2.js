@@ -1,3 +1,5 @@
+alert("stars v2 loaded");
+
 document.addEventListener("DOMContentLoaded", () => {
   console.log("🔥 stars.js IS RUNNING");
 
@@ -38,3 +40,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   animate();
 });
+
