@@ -1,67 +1,44 @@
-const canvas = document.getElementById("sky");
-const ctx = canvas.getContext("2d");
-let w,h;
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("space");
+  const ctx = canvas.getContext("2d");
 
-function resize(){
-  w = canvas.width = innerWidth;
-  h = canvas.height = innerHeight;
-}
-resize(); addEventListener("resize",resize);
+  let w, h;
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize", resize);
 
-const stars = [...Array(1800)].map(()=>({
-  x:Math.random()*w,
-  y:Math.random()*h,
-  ox:Math.random()*w,
-  oy:Math.random()*h,
-  tx:null,
-  ty:null
-}));
+  const stars = [];
 
-let mode = "idle"; // idle | name | back
+  for (let i = 0; i < 800; i++) {
+    stars.push({
+      r: Math.random() * Math.max(w, h),
+      a: Math.random() * Math.PI * 2,
+      s: 0.0001 + Math.random() * 0.0003,
+      size: Math.random() * 1.5 + 0.5
+    });
+  }
 
-function draw(){
-  ctx.fillStyle="#050510";
-  ctx.fillRect(0,0,w,h);
+  function animate() {
+    ctx.fillStyle = "#050510";
+    ctx.fillRect(0, 0, w, h);
 
-  stars.forEach(s=>{
-    const dx = (s.tx ?? s.ox) - s.x;
-    const dy = (s.ty ?? s.oy) - s.y;
-    s.x += dx*0.02;
-    s.y += dy*0.02;
+    stars.forEach(star => {
+      star.a += star.s * 16;
 
-    ctx.beginPath();
-    ctx.arc(s.x,s.y,1.3,0,7);
-    ctx.fillStyle="white";
-    ctx.fill();
-  });
+      const x = w / 2 + Math.cos(star.a) * star.r;
+      const y = h / 2 + Math.sin(star.a) * star.r;
 
-  requestAnimationFrame(draw);
-}
-draw();
+      ctx.beginPath();
+      ctx.arc(x, y, star.size, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.fill();
+    });
 
-function writeName(){
-  ctx.font="bold 120px serif";
-  ctx.fillText("OJASVI", w/2-280, h/2);
-  const data = ctx.getImageData(0,0,w,h).data;
-  let idx=0;
+    requestAnimationFrame(animate);
+  }
 
-  stars.forEach(s=>{
-    while(idx < data.length && data[idx+3]===0) idx+=4;
-    const p = idx/4;
-    s.tx = p % w;
-    s.ty = Math.floor(p/w);
-  });
-
-  mode="name";
-  setTimeout(returnStars,4000);
-}
-
-function returnStars(){
-  stars.forEach(s=>{
-    s.tx = null;
-    s.ty = null;
-  });
-  mode="back";
-}
-
-setTimeout(writeName,2000);
+  animate();
+});
