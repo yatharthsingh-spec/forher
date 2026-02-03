@@ -5,6 +5,7 @@
    - Parallax depth
    - Subtle twinkle
 ========================================= */
+console.log("🌌 background.js is running");
 
 const canvas = document.getElementById("space");
 const ctx = canvas.getContext("2d");
